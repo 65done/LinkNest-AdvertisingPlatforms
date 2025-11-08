@@ -1,0 +1,689 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Premium House Explorer</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        body {
+            background-color: #f8fafc;
+            color: #334155;
+            line-height: 1.6;
+        }
+        
+        header {
+            background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
+            color: white;
+            padding: 2rem 0;
+            text-align: center;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        }
+        
+        h1 {
+            font-size: 2.8rem;
+            margin-bottom: 0.5rem;
+            font-weight: 700;
+        }
+        
+        .subtitle {
+            font-size: 1.2rem;
+            opacity: 0.9;
+            max-width: 600px;
+            margin: 0 auto;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+        
+        .category-section {
+            margin-bottom: 3rem;
+        }
+        
+        .category-title {
+            font-size: 1.8rem;
+            margin-bottom: 1.5rem;
+            color: #2a5298;
+            border-bottom: 2px solid #eaeaea;
+            padding-bottom: 0.5rem;
+        }
+        
+        .houses-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 1.5rem;
+        }
+        
+        .house-card {
+            background: white;
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.08);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            cursor: pointer;
+        }
+        
+        .house-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15);
+        }
+        
+        .house-image {
+            width: 100%;
+            height: 200px;
+            object-fit: cover;
+        }
+        
+        .house-info {
+            padding: 1.5rem;
+        }
+        
+        .house-name {
+            font-size: 1.4rem;
+            margin-bottom: 0.5rem;
+            color: #1e3c72;
+        }
+        
+        .house-location {
+            color: #666;
+            margin-bottom: 1rem;
+            display: flex;
+            align-items: center;
+        }
+        
+        .house-location i {
+            margin-right: 0.5rem;
+        }
+        
+        .house-price {
+            font-size: 1.3rem;
+            font-weight: bold;
+            color: #2a5298;
+        }
+        
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.8);
+            z-index: 1000;
+            overflow-y: auto;
+        }
+        
+        .modal-content {
+            background-color: white;
+            margin: 2rem auto;
+            width: 90%;
+            max-width: 1000px;
+            border-radius: 10px;
+            overflow: hidden;
+            animation: modalFade 0.3s;
+        }
+        
+        @keyframes modalFade {
+            from {opacity: 0; transform: translateY(-20px);}
+            to {opacity: 1; transform: translateY(0);}
+        }
+        
+        .modal-header {
+            padding: 1.5rem;
+            background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
+            color: white;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .modal-title {
+            font-size: 1.8rem;
+        }
+        
+        .close-btn {
+            background: none;
+            border: none;
+            color: white;
+            font-size: 1.5rem;
+            cursor: pointer;
+        }
+        
+        .modal-body {
+            padding: 2rem;
+        }
+        
+        .house-gallery {
+            display: grid;
+            grid-template-columns: 2fr 1fr;
+            gap: 1rem;
+            margin-bottom: 2rem;
+        }
+        
+        .main-image {
+            width: 100%;
+            height: 300px;
+            object-fit: cover;
+            border-radius: 8px;
+        }
+        
+        .side-images {
+            display: grid;
+            grid-template-rows: 1fr 1fr;
+            gap: 1rem;
+        }
+        
+        .side-image {
+            width: 100%;
+            height: 145px;
+            object-fit: cover;
+            border-radius: 8px;
+        }
+        
+        .video-container {
+            margin: 2rem 0;
+        }
+        
+        .house-video {
+            width: 100%;
+            height: 400px;
+            border-radius: 8px;
+        }
+        
+        .property-details {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            gap: 1rem;
+            margin: 2rem 0;
+        }
+        
+        .detail-item {
+            background: #f0f4f8;
+            padding: 1rem;
+            border-radius: 8px;
+            text-align: center;
+        }
+        
+        .detail-value {
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: #2a5298;
+        }
+        
+        .detail-label {
+            font-size: 0.9rem;
+            color: #666;
+        }
+        
+        .description {
+            margin: 2rem 0;
+            line-height: 1.8;
+        }
+        
+        .amenities {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+            margin-top: 1rem;
+        }
+        
+        .amenity {
+            background: #e6f0ff;
+            padding: 0.5rem 1rem;
+            border-radius: 20px;
+            font-size: 0.9rem;
+        }
+        
+        .contact-section {
+            background: #f0f4f8;
+            padding: 1.5rem;
+            border-radius: 8px;
+            margin-top: 2rem;
+        }
+        
+        .contact-buttons {
+            display: flex;
+            gap: 1rem;
+            margin-top: 1rem;
+        }
+        
+        .contact-btn {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.8rem 1.5rem;
+            background: #2a5298;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-weight: 500;
+            transition: background 0.3s;
+        }
+        
+        .contact-btn:hover {
+            background: #1e3c72;
+        }
+        
+        .contact-btn.whatsapp {
+            background: #25D366;
+        }
+        
+        .contact-btn.whatsapp:hover {
+            background: #1da851;
+        }
+        
+        @media (max-width: 768px) {
+            .houses-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .house-gallery {
+                grid-template-columns: 1fr;
+            }
+            
+            .house-video {
+                height: 250px;
+            }
+            
+            .contact-buttons {
+                flex-direction: column;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>House Explorer</h1>
+        <p class="subtitle">Find your dream home from our premium collection of houses</p>
+    </header>
+    
+    <div class="container">
+        <section class="category-section">
+            <h2 class="category-title">Modern Villas</h2>
+            <div class="houses-grid" id="modern-villas">
+                <!-- Modern villas will be loaded here -->
+            </div>
+        </section>
+        
+        <section class="category-section">
+            <h2 class="category-title">Luxury Apartments</h2>
+            <div class="houses-grid" id="luxury-apartments">
+                <!-- Luxury apartments will be loaded here -->
+            </div>
+        </section>
+        
+        <section class="category-section">
+            <h2 class="category-title">Country Homes</h2>
+            <div class="houses-grid" id="country-homes">
+                <!-- Country homes will be loaded here -->
+            </div>
+        </section>
+        
+        <section class="category-section">
+            <h2 class="category-title">Beach Houses</h2>
+            <div class="houses-grid" id="beach-houses">
+                <!-- Beach houses will be loaded here -->
+            </div>
+        </section>
+        
+        <section class="category-section">
+            <h2 class="category-title">Mountain Cabins</h2>
+            <div class="houses-grid" id="mountain-cabins">
+                <!-- Mountain cabins will be loaded here -->
+            </div>
+        </section>
+    </div>
+    
+    <!-- Modal for house details -->
+    <div class="modal" id="houseModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 class="modal-title" id="modalHouseName">Modern Villa</h2>
+                <button class="close-btn" id="closeModal">&times;</button>
+            </div>
+            <div class="modal-body" id="modalBody">
+                <!-- Modal content will be populated by JavaScript -->
+            </div>
+        </div>
+    </div>
+    
+    <script>
+        // Sample house data
+        const houses = {
+            modernVillas: [
+                {
+                    id: 1,
+                    name: "Modern Villa Serenity",
+                    location: "Beverly Hills, CA",
+                    price: "$3,450,000",
+                    images: [
+                        "https://images.unsplash.com/photo-1613977257363-707ba9348227?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80",
+                        "https://images.unsplash.com/photo-1600607687939-ce8a6c25118c?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80",
+                        "https://images.unsplash.com/photo-1600607687644-c7171b42498b?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80"
+                    ],
+                    video: "https://player.vimeo.com/video/469262715",
+                    bedrooms: 5,
+                    bathrooms: 4,
+                    area: "4,200 sq ft",
+                    year: 2020,
+                    description: "This stunning modern villa offers breathtaking views, state-of-the-art amenities, and luxurious living spaces. The open floor plan seamlessly connects indoor and outdoor living areas, perfect for entertaining. The property features floor-to-ceiling windows, a gourmet kitchen with premium appliances, and a master suite with a spa-like bathroom.",
+                    amenities: ["Swimming Pool", "Home Theater", "Wine Cellar", "Smart Home System", "Gourmet Kitchen", "Spa Bathroom", "Private Garden", "Garage"]
+                },
+                {
+                    id: 2,
+                    name: "Contemporary Oasis",
+                    location: "Malibu, CA",
+                    price: "$5,200,000",
+                    images: [
+                        "https://images.unsplash.com/photo-1512917774080-9991f1c4c750?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80",
+                        "https://images.unsplash.com/photo-1600566753190-17f0baa2a6c3?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80",
+                        "https://images.unsplash.com/photo-1600566753086-00f18fb6b3ea?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80"
+                    ],
+                    video: "https://player.vimeo.com/video/469262715",
+                    bedrooms: 6,
+                    bathrooms: 5,
+                    area: "5,800 sq ft",
+                    year: 2019,
+                    description: "Perched on a cliff with panoramic ocean views, this architectural masterpiece combines sleek design with natural elements. Floor-to-ceiling windows flood the interior with natural light, highlighting the exquisite finishes and custom details throughout. The property includes a private beach access and multiple outdoor entertainment areas.",
+                    amenities: ["Infinity Pool", "Ocean View", "Private Beach Access", "Home Gym", "Outdoor Kitchen", "Guest House", "Wine Storage", "Smart Lighting"]
+                }
+            ],
+            luxuryApartments: [
+                {
+                    id: 3,
+                    name: "Skyline Penthouse",
+                    location: "Manhattan, NY",
+                    price: "$8,750,000",
+                    images: [
+                        "https://images.unsplash.com/photo-1545324418-cc1a3fa10c00?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80",
+                        "https://images.unsplash.com/photo-1484154218962-a197022b5858?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80",
+                        "https://images.unsplash.com/photo-1560448204-e02f11c3d0e2?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80"
+                    ],
+                    video: "https://player.vimeo.com/video/469262715",
+                    bedrooms: 4,
+                    bathrooms: 4,
+                    area: "3,500 sq ft",
+                    year: 2021,
+                    description: "This magnificent penthouse offers unparalleled views of the city skyline. With high-end finishes and designer details throughout, this residence defines luxury urban living. The open-concept living area features a custom fireplace and leads to a spacious terrace perfect for entertaining.",
+                    amenities: ["Private Elevator", "Terrace", "Concierge", "Wine Cooler", "Smart Home", "Panoramic Views", "High Ceilings", "Walk-in Closets"]
+                },
+                {
+                    id: 4,
+                    name: "Urban Loft Residence",
+                    location: "Chicago, IL",
+                    price: "$2,900,000",
+                    images: [
+                        "https://images.unsplash.com/photo-1493663284031-b7e3aefcae8e?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80",
+                        "https://images.unsplash.com/photo-1502672260266-1c1ef2d93688?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80",
+                        "https://images.unsplash.com/photo-1513584684374-8bab748fbf90?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80"
+                    ],
+                    video: "https://player.vimeo.com/video/469262715",
+                    bedrooms: 3,
+                    bathrooms: 2,
+                    area: "2,800 sq ft",
+                    year: 2018,
+                    description: "This stunning loft conversion features original exposed brick walls, high ceilings, and large industrial windows. The spacious open layout is perfect for modern living and entertaining. Located in a vibrant neighborhood with easy access to dining and entertainment.",
+                    amenities: ["Exposed Brick", "High Ceilings", "Concierge", "Rooftop Access", "Pet Friendly", "Secure Parking", "Fitness Center", "In-unit Laundry"]
+                }
+            ],
+            countryHomes: [
+                {
+                    id: 5,
+                    name: "Rustic Retreat",
+                    location: "Aspen, CO",
+                    price: "$2,900,000",
+                    images: [
+                        "https://images.unsplash.com/photo-1449824913935-59a10b8d2000?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80",
+                        "https://images.unsplash.com/photo-1571080636137-59c78bfc6e8a?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80",
+                        "https://images.unsplash.com/photo-1571086133308-7d9a89cbee4e?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80"
+                    ],
+                    video: "https://player.vimeo.com/video/469262715",
+                    bedrooms: 4,
+                    bathrooms: 3,
+                    area: "3,200 sq ft",
+                    year: 2015,
+                    description: "Nestled in the mountains, this charming country home offers a peaceful retreat with modern comforts. The property features extensive gardens and direct access to hiking trails. The interior combines rustic charm with contemporary amenities for comfortable year-round living.",
+                    amenities: ["Mountain Views", "Fireplace", "Hot Tub", "Gardens", "Workshop", "Garage", "Wooden Floors", "Wrap-around Porch"]
+                },
+                {
+                    id: 6,
+                    name: "Farmhouse Elegance",
+                    location: "Nashville, TN",
+                    price: "$1,850,000",
+                    images: [
+                        "https://images.unsplash.com/photo-1518780664697-55e3ad937233?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80",
+                        "https://images.unsplash.com/photo-1586023492125-27b2c045efd7?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80",
+                        "https://images.unsplash.com/photo-1568605114967-8130f3a36994?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80"
+                    ],
+                    video: "https://player.vimeo.com/video/469262715",
+                    bedrooms: 5,
+                    bathrooms: 3,
+                    area: "3,800 sq ft",
+                    year: 2012,
+                    description: "This beautifully restored farmhouse sits on 10 acres of rolling countryside. The property features original hardwood floors, a classic front porch, and a modern kitchen with farmhouse sink. The barn has been converted into a guest house with additional living space.",
+                    amenities: ["Wrap-around Porch", "Barn", "Pond", "Orchard", "Fire Pit", "Screened Porch", "Original Hardwoods", "Country Kitchen"]
+                }
+            ],
+            beachHouses: [
+                {
+                    id: 7,
+                    name: "Oceanfront Paradise",
+                    location: "Miami, FL",
+                    price: "$4,500,000",
+                    images: [
+                        "https://images.unsplash.com/photo-1512917774080-9991f1c4c750?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80",
+                        "https://images.unsplash.com/photo-1510798831971-661eb04b3739?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80",
+                        "https://images.unsplash.com/photo-1571896349842-33c89424de2d?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80"
+                    ],
+                    video: "https://player.vimeo.com/video/469262715",
+                    bedrooms: 4,
+                    bathrooms: 3,
+                    area: "3,500 sq ft",
+                    year: 2017,
+                    description: "This stunning beachfront property offers direct access to white sandy beaches and panoramic ocean views. The open design maximizes natural light and sea breezes, with multiple decks and balconies for outdoor living. The interior features coastal-inspired decor with high-end finishes.",
+                    amenities: ["Beach Access", "Ocean View", "Private Deck", "Outdoor Shower", "Heated Pool", "Kayak Storage", "Beachfront", "Sunset Views"]
+                },
+                {
+                    id: 8,
+                    name: "Coastal Cottage",
+                    location: "Outer Banks, NC",
+                    price: "$1,200,000",
+                    images: [
+                        "https://images.unsplash.com/photo-1523699289804-55347c09047d?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80",
+                        "https://images.unsplash.com/photo-1430285561322-780130471cdf?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80",
+                        "https://images.unsplash.com/photo-1475855581690-80accde3ae2b?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80"
+                    ],
+                    video: "https://player.vimeo.com/video/469262715",
+                    bedrooms: 3,
+                    bathrooms: 2,
+                    area: "1,800 sq ft",
+                    year: 2015,
+                    description: "Charming coastal cottage just steps from the beach. This home features a bright and airy interior with nautical touches, a screened porch for bug-free outdoor living, and an outdoor shower. Perfect as a vacation home or permanent residence.",
+                    amenities: ["Beach Access", "Screened Porch", "Outdoor Shower", "Beach Storage", "Bike Path", "Community Pool", "Walk to Beach", "Coastal Decor"]
+                }
+            ],
+            mountainCabins: [
+                {
+                    id: 9,
+                    name: "Alpine Lodge",
+                    location: "Park City, UT",
+                    price: "$2,300,000",
+                    images: [
+                        "https://images.unsplash.com/photo-1449158743715-0a90ebb6d2d8?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80",
+                        "https://images.unsplash.com/photo-1578662996442-48f60103fc96?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80",
+                        "https://images.unsplash.com/photo-1578662996442-48f60103fc96?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80"
+                    ],
+                    video: "https://player.vimeo.com/video/469262715",
+                    bedrooms: 4,
+                    bathrooms: 3,
+                    area: "2,800 sq ft",
+                    year: 2016,
+                    description: "This luxurious mountain lodge offers ski-in/ski-out access and breathtaking mountain views. The great room features a massive stone fireplace and floor-to-ceiling windows. The property includes a hot tub on the deck and a mud room for ski gear.",
+                    amenities: ["Ski Access", "Mountain Views", "Hot Tub", "Stone Fireplace", "Game Room", "Mud Room", "Deck", "Garage"]
+                },
+                {
+                    id: 10,
+                    name: "Wilderness Retreat",
+                    location: "Lake Tahoe, CA",
+                    price: "$1,800,000",
+                    images: [
+                        "https://images.unsplash.com/photo-1578662996442-48f60103fc96?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80",
+                        "https://images.unsplash.com/photo-1449158743715-0a90ebb6d2d8?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80",
+                        "https://images.unsplash.com/photo-1578662996442-48f60103fc96?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80"
+                    ],
+                    video: "https://player.vimeo.com/video/469262715",
+                    bedrooms: 3,
+                    bathrooms: 2,
+                    area: "2,200 sq ft",
+                    year: 2014,
+                    description: "Secluded cabin nestled in the woods with private lake access. This property offers complete privacy and tranquility while being just minutes from town. The interior features rustic decor with modern amenities and a wood-burning stove.",
+                    amenities: ["Lake Access", "Wood-burning Stove", "Private Dock", "Hiking Trails", "Wildlife Viewing", "Fire Pit", "Secluded", "Forest Setting"]
+                }
+            ]
+        };
+
+        // DOM elements
+        const modernVillasGrid = document.getElementById('modern-villas');
+        const luxuryApartmentsGrid = document.getElementById('luxury-apartments');
+        const countryHomesGrid = document.getElementById('country-homes');
+        const beachHousesGrid = document.getElementById('beach-houses');
+        const mountainCabinsGrid = document.getElementById('mountain-cabins');
+        const modal = document.getElementById('houseModal');
+        const modalHouseName = document.getElementById('modalHouseName');
+        const modalBody = document.getElementById('modalBody');
+        const closeModal = document.getElementById('closeModal');
+
+        // Function to create house cards
+        function createHouseCard(house) {
+            const card = document.createElement('div');
+            card.className = 'house-card';
+            card.innerHTML = `
+                <img src="${house.images[0]}" alt="${house.name}" class="house-image">
+                <div class="house-info">
+                    <h3 class="house-name">${house.name}</h3>
+                    <div class="house-location">
+                        <i class="fas fa-map-marker-alt"></i> ${house.location}
+                    </div>
+                    <div class="house-price">${house.price}</div>
+                </div>
+            `;
+            
+            card.addEventListener('click', () => openModal(house));
+            return card;
+        }
+
+        // Function to open modal with house details
+        function openModal(house) {
+            modalHouseName.textContent = house.name;
+            
+            modalBody.innerHTML = `
+                <div class="house-gallery">
+                    <img src="${house.images[0]}" alt="${house.name}" class="main-image">
+                    <div class="side-images">
+                        <img src="${house.images[1]}" alt="${house.name}" class="side-image">
+                        <img src="${house.images[2]}" alt="${house.name}" class="side-image">
+                    </div>
+                </div>
+                
+                <div class="property-details">
+                    <div class="detail-item">
+                        <div class="detail-value">${house.bedrooms}</div>
+                        <div class="detail-label">Bedrooms</div>
+                    </div>
+                    <div class="detail-item">
+                        <div class="detail-value">${house.bathrooms}</div>
+                        <div class="detail-label">Bathrooms</div>
+                    </div>
+                    <div class="detail-item">
+                        <div class="detail-value">${house.area}</div>
+                        <div class="detail-label">Area</div>
+                    </div>
+                    <div class="detail-item">
+                        <div class="detail-value">${house.year}</div>
+                        <div class="detail-label">Year Built</div>
+                    </div>
+                </div>
+                
+                <div class="description">
+                    <h3>Description</h3>
+                    <p>${house.description}</p>
+                </div>
+                
+                <div class="description">
+                    <h3>Amenities</h3>
+                    <div class="amenities">
+                        ${house.amenities.map(amenity => `<span class="amenity">${amenity}</span>`).join('')}
+                    </div>
+                </div>
+                
+                <div class="video-container">
+                    <h3>Property Video</h3>
+                    <iframe src="${house.video}" class="house-video" frameborder="0" allow="autoplay; fullscreen; picture-in-picture" allowfullscreen></iframe>
+                </div>
+                
+                <div class="contact-section">
+                    <h3>Interested in this property?</h3>
+                    <p>Contact us for more information or to schedule a viewing</p>
+                    <div class="contact-buttons">
+                        <button class="contact-btn">
+                            <i class="fas fa-phone"></i> Call Agent
+                        </button>
+                        <button class="contact-btn whatsapp">
+                            <i class="fab fa-whatsapp"></i> WhatsApp
+                        </button>
+                        <button class="contact-btn">
+                            <i class="fas fa-envelope"></i> Email
+                        </button>
+                    </div>
+                </div>
+            `;
+            
+            modal.style.display = 'block';
+        }
+
+        // Close modal when clicking the X button
+        closeModal.addEventListener('click', () => {
+            modal.style.display = 'none';
+        });
+
+        // Close modal when clicking outside the modal content
+        window.addEventListener('click', (e) => {
+            if (e.target === modal) {
+                modal.style.display = 'none';
+            }
+        });
+
+        // Populate house grids
+        houses.modernVillas.forEach(house => {
+            modernVillasGrid.appendChild(createHouseCard(house));
+        });
+        
+        houses.luxuryApartments.forEach(house => {
+            luxuryApartmentsGrid.appendChild(createHouseCard(house));
+        });
+        
+        houses.countryHomes.forEach(house => {
+            countryHomesGrid.appendChild(createHouseCard(house));
+        });
+        
+        houses.beachHouses.forEach(house => {
+            beachHousesGrid.appendChild(createHouseCard(house));
+        });
+        
+        houses.mountainCabins.forEach(house => {
+            mountainCabinsGrid.appendChild(createHouseCard(house));
+        });
+    </script>
+</body>
+</html>
